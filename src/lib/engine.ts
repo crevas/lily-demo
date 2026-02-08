@@ -214,29 +214,17 @@ function buildTools(phone: string) {
           status: 'pending',
         })
 
-        // Check if this is the user's first task → trigger 10-second preview
-        const { data: user } = await supabase
-          .from('lily_users2')
-          .select('first_task_sent')
-          .eq('phone', phone)
-          .single()
-
-        if (user && !user.first_task_sent) {
-          const previewTime = new Date(
-            Date.now() + 10 * 1000
-          ).toISOString()
-          await supabase.from('lily_tasks').insert({
-            phone,
-            summary,
-            reminder_at: previewTime,
-            is_preview: true,
-            status: 'pending',
-          })
-          await supabase
-            .from('lily_users2')
-            .update({ first_task_sent: true })
-            .eq('phone', phone)
-        }
+        // Always send a preview reminder 2 seconds after task creation
+        const previewTime = new Date(
+          Date.now() + 2 * 1000
+        ).toISOString()
+        await supabase.from('lily_tasks').insert({
+          phone,
+          summary,
+          reminder_at: previewTime,
+          is_preview: true,
+          status: 'pending',
+        })
 
         return { created: true, summary, reminderAt }
       },
