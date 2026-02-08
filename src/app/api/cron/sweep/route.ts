@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
-import { sendMessage } from '@/lib/whatsapp'
+import { sendMessage as sendWhatsApp } from '@/lib/whatsapp'
+import { sendMessage as sendTelegram } from '@/lib/telegram'
 import { generateScratch } from '@/lib/scratch'
 import type { LilyTask } from '@/lib/types'
 
@@ -39,8 +40,12 @@ export async function GET(req: NextRequest) {
         msg = `Hey — ${task.summary}\n\n${scratch}`
       }
 
-      // Send via WhatsApp
-      await sendMessage(task.phone, msg)
+      // Send via the right platform
+      if (task.phone.startsWith('tg_')) {
+        await sendTelegram(task.phone.replace('tg_', ''), msg)
+      } else {
+        await sendWhatsApp(task.phone, msg)
+      }
 
       // Mark as reminded
       await supabase

@@ -1,4 +1,5 @@
 const WHATSAPP_NUMBER = process.env.WHATSAPP_NUMBER || '14155551234'
+const TELEGRAM_BOT = process.env.TELEGRAM_BOT_USERNAME || ''
 
 export default function Home() {
   return (
@@ -14,14 +15,26 @@ export default function Home() {
         </p>
 
         {/* CTA */}
-        <a
-          href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hi%20Lily`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 rounded-full bg-[#25D366] px-8 py-4 text-lg font-semibold text-white transition-transform hover:scale-105 active:scale-95"
-        >
-          Talk to Lily on WhatsApp 💬
-        </a>
+        <div className="flex flex-col gap-3">
+          <a
+            href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hi%20Lily`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-2 rounded-full bg-[#25D366] px-8 py-4 text-lg font-semibold text-white transition-transform hover:scale-105 active:scale-95"
+          >
+            WhatsApp 💬
+          </a>
+          {TELEGRAM_BOT && (
+            <a
+              href={`https://t.me/${TELEGRAM_BOT}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-[#0088cc] px-8 py-4 text-lg font-semibold text-white transition-transform hover:scale-105 active:scale-95"
+            >
+              Telegram 💬
+            </a>
+          )}
+        </div>
 
         {/* Subtext */}
         <p className="text-sm text-neutral-500 pt-4">
