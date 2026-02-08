@@ -1,4 +1,4 @@
-const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '14155551234'
+const WHATSAPP_NUMBER = process.env.WHATSAPP_NUMBER || '14155551234'
 
 export default function Home() {
   return (

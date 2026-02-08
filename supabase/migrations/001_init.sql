@@ -2,7 +2,7 @@
 -- Run this in Supabase SQL Editor
 
 -- Demo users: identified by phone number, no auth
-create table lily_users (
+create table lily_users2 (
   phone text primary key,
   first_task_sent boolean default false,
   lily_memory text default '',
@@ -12,7 +12,7 @@ create table lily_users (
 -- Tasks: what Lily is holding for each user
 create table lily_tasks (
   id uuid primary key default gen_random_uuid(),
-  phone text not null references lily_users(phone),
+  phone text not null references lily_users2(phone),
   summary text not null,
   reminder_at timestamptz,
   scratch text,
@@ -30,7 +30,7 @@ create index idx_lily_tasks_phone
 -- Conversation history: AI context for multi-turn understanding
 create table lily_conversations (
   id uuid primary key default gen_random_uuid(),
-  phone text not null references lily_users(phone),
+  phone text not null references lily_users2(phone),
   role text not null check (role in ('user', 'assistant')),
   content text not null,
   created_at timestamptz default now()

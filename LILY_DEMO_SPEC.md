@@ -96,7 +96,7 @@ Create one Supabase project. Run this migration:
 -- supabase/migrations/001_init.sql
 
 -- Demo users: identified by phone number, no auth
-create table lily_users (
+create table lily_users2 (
   phone text primary key,
   first_task_sent boolean default false,
   lily_memory text default '',
@@ -106,7 +106,7 @@ create table lily_users (
 -- Tasks: what Lily is holding for each user
 create table lily_tasks (
   id uuid primary key default gen_random_uuid(),
-  phone text not null references lily_users(phone),
+  phone text not null references lily_users2(phone),
   summary text not null,
   reminder_at timestamptz,
   scratch text,
@@ -124,7 +124,7 @@ create index idx_lily_tasks_phone
 -- Conversation history: AI context for multi-turn understanding
 create table lily_conversations (
   id uuid primary key default gen_random_uuid(),
-  phone text not null references lily_users(phone),
+  phone text not null references lily_users2(phone),
   role text not null check (role in ('user', 'assistant')),
   content text not null,
   created_at timestamptz default now()
@@ -274,7 +274,7 @@ Handles two HTTP methods:
    - "document" → download media(message.document.id) → { type: "file", data, mimeType }
 5. Handle URLs in text: if message.type === "text", check for URLs in body
    Extract any URLs and append a note for the engine: "[This message contains a link: {url}]"
-6. Ensure user exists: UPSERT into lily_users (phone) ON CONFLICT DO NOTHING
+6. Ensure user exists: UPSERT into lily_users2 (phone) ON CONFLICT DO NOTHING
 7. Call engine.processMessage({ phone, content })
 8. Send reply via whatsapp.sendMessage(phone, result.reply)
 9. Return 200
@@ -302,7 +302,7 @@ This is the core. One exported function: `processMessage()`.
 1. Fetch context from Supabase (all 3 queries in parallel):
    a. Pending tasks: SELECT * FROM lily_tasks WHERE phone = X AND status = 'pending' ORDER BY reminder_at LIMIT 20
    b. Recent history: SELECT role, content FROM lily_conversations WHERE phone = X ORDER BY created_at DESC LIMIT 20, then reverse
-   c. User memory: SELECT lily_memory FROM lily_users WHERE phone = X
+   c. User memory: SELECT lily_memory FROM lily_users2 WHERE phone = X
 
 2. Build context string (see buildContext below)
 
@@ -478,10 +478,10 @@ createTask:
   }
   execute:
     1. INSERT into lily_tasks { phone, summary, reminder_at: reminderAt, status: 'pending' }
-    2. Check lily_users.first_task_sent for this phone
+    2. Check lily_users2.first_task_sent for this phone
        If false:
          - INSERT another lily_tasks { phone, summary, reminder_at: NOW() + 10 seconds, is_preview: true }
-         - UPDATE lily_users SET first_task_sent = true
+         - UPDATE lily_users2 SET first_task_sent = true
     3. Return { created: true, summary, reminderAt }
 
 completeTask:
@@ -520,9 +520,9 @@ saveMemo:
     memo: z.string().describe("One-line note, e.g. 'prefers morning reminders' or 'has team meeting every Tuesday'")
   }
   execute:
-    1. SELECT lily_memory FROM lily_users WHERE phone = X
+    1. SELECT lily_memory FROM lily_users2 WHERE phone = X
     2. Append memo as new line
-    3. UPDATE lily_users SET lily_memory = updated
+    3. UPDATE lily_users2 SET lily_memory = updated
     4. Return { saved: memo }
 
 readLink:
@@ -654,7 +654,7 @@ When Lily receives the first message from a new phone number:
 
 ```
 1. Webhook receives message from unknown phone
-2. UPSERT into lily_users (phone) → creates user with defaults
+2. UPSERT into lily_users2 (phone) → creates user with defaults
 3. Engine processes message:
    - If message is "Hi Lily" or similar greeting (no task content):
      Lily responds naturally:

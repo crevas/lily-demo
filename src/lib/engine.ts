@@ -216,7 +216,7 @@ function buildTools(phone: string) {
 
         // Check if this is the user's first task → trigger 10-second preview
         const { data: user } = await supabase
-          .from('lily_users')
+          .from('lily_users2')
           .select('first_task_sent')
           .eq('phone', phone)
           .single()
@@ -233,7 +233,7 @@ function buildTools(phone: string) {
             status: 'pending',
           })
           await supabase
-            .from('lily_users')
+            .from('lily_users2')
             .update({ first_task_sent: true })
             .eq('phone', phone)
         }
@@ -337,7 +337,7 @@ function buildTools(phone: string) {
       }),
       execute: async ({ memo }: { memo: string }) => {
         const { data: user } = await supabase
-          .from('lily_users')
+          .from('lily_users2')
           .select('lily_memory')
           .eq('phone', phone)
           .single()
@@ -347,7 +347,7 @@ function buildTools(phone: string) {
           : memo
 
         await supabase
-          .from('lily_users')
+          .from('lily_users2')
           .update({ lily_memory: updated })
           .eq('phone', phone)
 
@@ -407,7 +407,7 @@ export async function processMessage({
       .order('created_at', { ascending: false })
       .limit(20),
     supabase
-      .from('lily_users')
+      .from('lily_users2')
       .select('lily_memory')
       .eq('phone', phone)
       .single(),

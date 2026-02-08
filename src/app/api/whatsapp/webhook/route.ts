@@ -89,7 +89,7 @@ export async function POST(req: NextRequest) {
 
       // Ensure user exists
       await supabase
-        .from('lily_users')
+        .from('lily_users2')
         .upsert({ phone }, { onConflict: 'phone', ignoreDuplicates: true })
 
       // Process with Lily engine
