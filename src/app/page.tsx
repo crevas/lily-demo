@@ -22,7 +22,7 @@ export default function Home() {
             rel="noopener noreferrer"
             className="inline-flex items-center justify-center gap-2 rounded-full bg-[#25D366] px-8 py-4 text-lg font-semibold text-white transition-transform hover:scale-105 active:scale-95"
           >
-            WhatsApp 💬
+            Talk to Lily on WhatsApp 💬
           </a>
           {TELEGRAM_BOT && (
             <a
@@ -31,7 +31,7 @@ export default function Home() {
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-2 rounded-full bg-[#0088cc] px-8 py-4 text-lg font-semibold text-white transition-transform hover:scale-105 active:scale-95"
             >
-              Telegram 💬
+              Talk to Lily on Telegram 💬
             </a>
           )}
         </div>
